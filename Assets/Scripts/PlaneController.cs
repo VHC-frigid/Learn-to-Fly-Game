@@ -71,4 +71,22 @@ public class PlaneController : MonoBehaviour
         return Mathf.InverseLerp(0, 10, rb.velocity.magnitude);
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        IScoreable scoreable = other.GetComponent<IScoreable>();
+        if (scoreable != null)
+        {
+            Debug.Log(scoreable.OnScore());
+        }
+    }
+
+    public void OnCollisionEnter(Collision other)
+    {
+        IScoreable scoreable = other.gameObject.GetComponent<IScoreable>();
+        if (scoreable != null)
+        {
+            Debug.Log(scoreable.OnScore());
+        }
+    }
+
 }

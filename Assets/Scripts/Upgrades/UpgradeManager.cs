@@ -6,14 +6,31 @@ using UnityEngine.UI;
 
 public class UpgradeManager : MonoBehaviour
 {
+    //Field
     [SerializeField] private int money = 0;
-
     [SerializeField] private Button buttonPrefab;
     [SerializeField] private Transform buttonParent;
 
     private PlaneController planeController;
-
     private List<BaseUpgrade> upgrades;
+
+    //property
+    public int Money
+    {
+        get
+        {
+            return money;
+        }
+        set
+        {
+            money = value;
+            foreach (var upgrade in upgrades)
+            {
+                upgrade.CheckButtonCost(value);
+            }
+        }
+    }
+
 
     
     void Start()
@@ -34,8 +51,10 @@ public class UpgradeManager : MonoBehaviour
         foreach(var upgrade in upgrades)
         {
             Button go = Instantiate(buttonPrefab, buttonParent);
-            TMP_Text text = go.GetComponent<TMP_Text>();
+            TMP_Text text = go.GetComponentInChildren<TMP_Text>();
             text.text = upgrade.UpgradeName();
+            upgrade.SetButton(go);
+            upgrade.CheckButtonCost(Money);
 
             int y = x;
             go.onClick.AddListener(() => PurchaseUpgrade(y));
@@ -45,9 +64,16 @@ public class UpgradeManager : MonoBehaviour
     
     public void PurchaseUpgrade(int index)
     {
-        if (upgrades[index].PayForUpgrade(ref money))
+        int tempMoney = Money;
+        if (upgrades[index].PayForUpgrade(ref tempMoney))
         {
             upgrades[index].ApplyUpgrade();
         }
+        Money = tempMoney;
+    }
+
+    public void EarnMoney(int amount)
+    {
+        Money += amount;
     }
 }

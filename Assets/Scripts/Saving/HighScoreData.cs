@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 [System.Serializable]
 public class HighScoreData 
 {
+    
     public float[] scores;
     public string[] names;
 
+    public Float3 playerPosition;
+    
     public HighScoreData()
     {
         scores = new[] { 99f, 40f, 2f };
@@ -18,6 +22,13 @@ public class HighScoreData
     {
         this.scores = scores;
         this.names = names;
+    }
+
+    public HighScoreData(float[] scores, string[] names, Vector3 position)
+    {
+        this.scores = scores;
+        this.names = names;
+        this.playerPosition = new Float3(position);
     }
 
 }

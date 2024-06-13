@@ -14,4 +14,15 @@ public static class JsonSaveLoad
 
         File.WriteAllText(file, json);
     }
+
+    public static HighScoreData Load()
+    {
+        if (File.Exists(file))
+        {
+            string json = File.ReadAllText(file);
+            return JsonUtility.FromJson<HighScoreData>(json);
+        }
+
+        return null;
+    }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlaneController : MonoBehaviour
 {
@@ -11,12 +12,25 @@ public class PlaneController : MonoBehaviour
     public float gravity = 9.81f;
     public float rotationSpeed;
 
+    public float score = 0;
+    public Vector3 startPos;
+    HighScoreSystem scoreSystem;
+
+    string[] randomName = { "Andrew", "Fred", "Tom", "Will", "Corey" };
+
+    [SerializeField] GameObject LoseGameUI;
+
     // Start is called before the first frame update
     void Start()
     {
+        scoreSystem = FindObjectOfType<HighScoreSystem>();
+
         rb = GetComponent<Rigidbody>();
 
         rb.AddForce(transform.forward * speed, ForceMode.Acceleration);
+
+        startPos = transform.position;
+
     }
 
     // -MAFS-  
@@ -76,7 +90,7 @@ public class PlaneController : MonoBehaviour
         IScoreable scoreable = other.GetComponent<IScoreable>();
         if (scoreable != null)
         {
-            Debug.Log(scoreable.OnScore());
+            score += scoreable.OnScore();
         }
     }
 
@@ -85,7 +99,30 @@ public class PlaneController : MonoBehaviour
         IScoreable scoreable = other.gameObject.GetComponent<IScoreable>();
         if (scoreable != null)
         {
-            Debug.Log(scoreable.OnScore());
+            score += scoreable.OnScore();
+        }
+
+        if(other.transform.tag == "Lose")
+        {
+            float distance = (startPos - transform.position).magnitude;
+
+            score += distance;
+
+            scoreSystem.NewScore(randomName[Random.Range(0,randomName.Length)], score);
+
+            LoseGameUI.SetActive(true);
+            Time.timeScale = 0;
+
+
+        }
+    }
+
+    private void Update()
+    {
+        if(Input.GetKey(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            Time.timeScale = 1;
         }
     }
 
